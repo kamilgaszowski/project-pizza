@@ -61,6 +61,8 @@
 
       thisProduct.renderInMenu();
 
+      thisProduct.initAccordion();
+
       console.log('new Product: ', thisProduct);
     }
 
@@ -75,6 +77,40 @@
 
       menuContainer.appendChild(thisProduct.element);
 
+
+    }
+
+    initAccordion(){
+      const thisProduct = this;
+
+      /* find the clickable trigger */
+      const triggers = thisProduct.element.querySelectorAll(select.menuProduct.clickable);
+      console.log('triggers: ', triggers);
+      /* START: click event listener to trigger */
+      for(let trigger of triggers){
+        trigger.addEventListener('click', function(){
+          console.log('clicked');
+          /* prevent default action for event */
+          event.preventDefault();
+          /* toggle active class on element of thisProduct */
+          thisProduct.element.classList.add('active');
+          console.log('klasa acive dodana:', thisProduct.element);
+          /* find all active products */
+          const products = document.querySelectorAll('article.active');
+          /* START LOOP: for each active product */
+          for(let product of products){
+            /* START: if the active product isn't the element of thisProduct */
+            if(product != thisProduct.element){
+            /*remove class active for the active product */
+              product.classList.remove('active');
+              console.log('klasa active usunięta', product);
+            }
+          /* END: if the active product isn't the element od thisProduct */
+          }
+        /* End LOOP: for each active product */
+        });
+      }
+      /* END: click event listener to trigger */
 
     }
   }
