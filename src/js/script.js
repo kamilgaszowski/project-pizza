@@ -61,7 +61,13 @@
 
       thisProduct.renderInMenu();
 
+      thisProduct.getElements();
+
       thisProduct.initAccordion();
+
+      thisProduct.initOrderForm();
+
+      thisProduct.processOrder();
 
       console.log('new Product: ', thisProduct);
     }
@@ -77,40 +83,97 @@
 
       menuContainer.appendChild(thisProduct.element);
 
+    }
 
+    getElements(){
+      const thisProduct = this;
+
+      thisProduct.accordionTrigger = thisProduct.element.querySelector(select.menuProduct.clickable);
+      thisProduct.form = thisProduct.element.querySelector(select.menuProduct.form);
+      thisProduct.formInputs = thisProduct.element.querySelectorAll(select.all.formInputs);
+      thisProduct.cartButton = thisProduct.element.querySelector(select.menuProduct.cartButton);
+      thisProduct.priceElem = thisProduct.element.querySelector(select.menuProduct.priceElem);
     }
 
     initAccordion(){
       const thisProduct = this;
 
       /* find the clickable trigger */
-      const triggers = thisProduct.element.querySelectorAll(select.menuProduct.clickable);
-      console.log('triggers: ', triggers);
+      const trigger = thisProduct.accordionTrigger;
+      console.log('triggers: ', trigger);
       /* START: click event listener to trigger */
-      for(let trigger of triggers){
-        trigger.addEventListener('click', function(){
-          console.log('clicked');
-          /* prevent default action for event */
-          event.preventDefault();
-          /* toggle active class on element of thisProduct */
-          thisProduct.element.classList.add('active');
-          console.log('klasa acive dodana:', thisProduct.element);
-          /* find all active products */
-          const products = document.querySelectorAll('article.active');
-          /* START LOOP: for each active product */
-          for(let product of products){
-            /* START: if the active product isn't the element of thisProduct */
-            if(product != thisProduct.element){
-            /*remove class active for the active product */
-              product.classList.remove('active');
-              console.log('klasa active usunięta', product);
-            }
-          /* END: if the active product isn't the element od thisProduct */
+      trigger.addEventListener('click', function(){
+        console.log('clicked');
+        /* prevent default action for event */
+        event.preventDefault();
+        /* toggle active class on element of thisProduct */
+        thisProduct.element.classList.add('active');
+        console.log('klasa acive dodana:', thisProduct.element);
+        /* find all active products */
+        const products = document.querySelectorAll('article.active');
+        /* START LOOP: for each active product */
+        for(let product of products){
+          /* START: if the active product isn't the element of thisProduct */
+          if(product != thisProduct.element){
+          /*remove class active for the active product */
+            product.classList.remove('active');
+            console.log('klasa active usunięta', product);
           }
+          /* END: if the active product isn't the element od thisProduct */
+        }
         /* End LOOP: for each active product */
+      });
+      /* END: click event listener to trigger */
+    }
+
+    initOrderForm(){
+      const thisProduct = this;
+
+      console.log('initOrderForm', thisProduct);
+
+      thisProduct.form.addEventListener('submit', function(event){
+        event.preventDefault();
+        thisProduct.processOrder();
+      });
+
+      for(let input of thisProduct.formInputs){
+        input.addEventListener('change', function(){
+          thisProduct.processOrder();
         });
       }
-      /* END: click event listener to trigger */
+
+      thisProduct.cartButton.addEventListener('click', function(event){
+        event.preventDefault();
+        thisProduct.processOrder();
+      });
+    }
+
+    processOrder(){
+      const thisProduct = this;
+      console.log('processOrder: ', thisProduct);
+
+      const formData = utils.serializeFormToObject(thisProduct.form);
+      console.log('formData: ', formData);
+
+      let price = thisProduct.data.price;
+      console.log('price: ', price);
+
+      for(let paramId in thisProduct.data.params){
+        const selected = thisProduct.data.params.hasOwnProperty(paramId);
+        console.log('selected: ', selected);
+
+        for(let optionId in thisProduct.data.params.options){
+          const optionSelected = formData.hasOwnProperty(paramId) && formData[paramId];
+
+          if(optionSelected && !option.default){
+            price += options.price;
+          } else if(!optionSelected && option.default){
+            price -= options.price;
+          }
+        }
+      }
+      thisProduct.priceElem = price;
+      console.log('change price:', price);
 
     }
   }
