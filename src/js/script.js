@@ -159,21 +159,29 @@
       console.log('price: ', price);
 
       for(let paramId in thisProduct.data.params){
-        const selected = thisProduct.data.params.hasOwnProperty(paramId);
-        console.log('selected: ', selected);
 
-        for(let optionId in thisProduct.data.params.options){
+
+        const selected = thisProduct.data.params[paramId];
+
+
+        for(let optionId in selected.options){
+
+          const option = selected.options[optionId];
+          console.log('option: ', option);
           const optionSelected = formData.hasOwnProperty(paramId) && formData[paramId];
 
           if(optionSelected && !option.default){
-            price += options.price;
+            console.log('option default:', option.default);
+            price += option.price;
+
           } else if(!optionSelected && option.default){
-            price -= options.price;
+            price -= option.price;
           }
+          console.log('price:', price);
         }
       }
-      thisProduct.priceElem = price;
-      console.log('change price:', price);
+      thisProduct.priceElem.innerHTML = price;
+
 
     }
   }
