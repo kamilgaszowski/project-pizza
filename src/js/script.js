@@ -168,16 +168,19 @@
 
           const option = selected.options[optionId];
           console.log('option: ', option);
-          const optionSelected = formData.hasOwnProperty(paramId) && formData[paramId];
+          const optionSelected = formData.hasOwnProperty(paramId) && formData[paramId].indexOf(optionId) > -1;
 
           if(optionSelected && !option.default){
-            console.log('option default:', option.default);
+            console.log('!option default:', !option.default);
             price += option.price;
+            console.log('price +:', option.price);
 
           } else if(!optionSelected && option.default){
             price -= option.price;
+
+            console.log('price -:', option.price);
           }
-          console.log('price:', price);
+
         }
       }
       thisProduct.priceElem.innerHTML = price;
