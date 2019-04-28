@@ -67,6 +67,8 @@
 
       thisProduct.initOrderForm();
 
+      thisProduct.initAmountWidget();
+
       thisProduct.processOrder();
 
       console.log('new Product: ', thisProduct);
@@ -94,6 +96,7 @@
       thisProduct.cartButton = thisProduct.element.querySelector(select.menuProduct.cartButton);
       thisProduct.priceElem = thisProduct.element.querySelector(select.menuProduct.priceElem);
       thisProduct.imageWrapper = thisProduct.element.querySelector(select.menuProduct.imageWrapper);
+      thisProduct.amountWidgetElem = thisProduct.element.querySelector(select.menuProduct.amountWidget);
     }
 
     initAccordion(){
@@ -101,15 +104,15 @@
 
       /* find the clickable trigger */
       const trigger = thisProduct.accordionTrigger;
-      console.log('triggers: ', trigger);
+      // console.log('triggers: ', trigger);
       /* START: click event listener to trigger */
       trigger.addEventListener('click', function(){
-        console.log('clicked');
+        // console.log('clicked');
         /* prevent default action for event */
         event.preventDefault();
         /* toggle active class on element of thisProduct */
         thisProduct.element.classList.add('active');
-        console.log('klasa acive dodana:', thisProduct.element);
+        // console.log('klasa acive dodana:', thisProduct.element);
         /* find all active products */
         const products = document.querySelectorAll('article.active');
         /* START LOOP: for each active product */
@@ -118,7 +121,7 @@
           if(product != thisProduct.element){
           /*remove class active for the active product */
             product.classList.remove('active');
-            console.log('klasa active usunięta', product);
+            // console.log('klasa active usunięta', product);
           }
           /* END: if the active product isn't the element od thisProduct */
         }
@@ -130,7 +133,7 @@
     initOrderForm(){
       const thisProduct = this;
 
-      console.log('initOrderForm', thisProduct);
+      // console.log('initOrderForm', thisProduct);
 
       thisProduct.form.addEventListener('submit', function(event){
         event.preventDefault();
@@ -151,13 +154,13 @@
 
     processOrder(){
       const thisProduct = this;
-      console.log('processOrder: ', thisProduct);
+      // console.log('processOrder: ', thisProduct);
 
       const formData = utils.serializeFormToObject(thisProduct.form);
-      console.log('formData: ', formData);
+      // console.log('formData: ', formData);
 
       let price = thisProduct.data.price;
-      console.log('price: ', price);
+      // console.log('price: ', price);
 
       for(let paramId in thisProduct.data.params){
 
@@ -168,21 +171,21 @@
         for(let optionId in selected.options){
 
           const option = selected.options[optionId];
-          console.log('option: ', option);
+          // console.log('option: ', option);
           const optionSelected = formData.hasOwnProperty(paramId) && formData[paramId].indexOf(optionId) > -1;
 
           if(optionSelected && !option.default){
-            console.log('!option default:', !option.default);
+            // console.log('!option default:', !option.default);
             price += option.price;
-            console.log('price +:', option.price);
+            // console.log('price +:', option.price);
 
           } else if(!optionSelected && option.default){
             price -= option.price;
 
-            console.log('price -:', option.price);
+            // console.log('price -:', option.price);
           }
           const imagesClass = thisProduct.imageWrapper.querySelectorAll('.' + paramId + '-' + optionId);
-          console.log('imagesClass: ', imagesClass);
+          // console.log('imagesClass: ', imagesClass);
 
           if(optionSelected){
             for(let imageClass of imagesClass){
@@ -195,11 +198,91 @@
           }
         }
       }
+      price *= thisProduct.amountWidget.value;
       thisProduct.priceElem.innerHTML = price;
 
 
     }
+
+    initAmountWidget(){
+      const thisProduct = this;
+
+      thisProduct.amountWidget = new AmountWidget(thisProduct.amountWidgetElem);
+
+      thisProduct.amountWidgetElem.addEventListener('updated', function(){
+        thisProduct.processOrder();
+      });
+    }
   }
+
+  class AmountWidget{
+    constructor(element){
+      const thisWidget = this;
+
+      thisWidget.getElements(element);
+
+      thisWidget.value = settings.amountWidget.defaultValue;
+      thisWidget.setValue(thisWidget.input.value);
+      thisWidget.initActions();
+      console.log('AmountWidget: ', thisWidget);
+      console.log('constructor arguments: ', element);
+    }
+
+    getElements(element){
+      const thisWidget = this;
+
+      thisWidget.element = element;
+      thisWidget.input = thisWidget.element.querySelector(select.widgets.amount.input);
+      thisWidget.linkDecrease = thisWidget.element.querySelector(select.widgets.amount.linkDecrease);
+      thisWidget.linkIncrease = thisWidget.element.querySelector(select.widgets.amount.linkIncrease);
+    }
+
+    setValue(value){
+      const thisWidget = this;
+
+      const newValue = parseInt(value);
+
+      /*TODO: Add validation*/
+
+      if(newValue != thisWidget.value && newValue >= settings.amountWidget.defaultMin && newValue <= settings.amountWidget.defaultMax){
+        thisWidget.value = newValue;
+        thisWidget.announce();
+      }
+      thisWidget.input.value = thisWidget.value;
+
+    }
+
+
+    initActions(){
+      const thisWidget = this;
+
+      thisWidget.input.addEventListener('change', function(){
+        thisWidget.setValue(thisWidget.input.value);
+      });
+
+      thisWidget.linkDecrease.addEventListener('click', function(){
+        event.preventDefault();
+        thisWidget.setValue(thisWidget.value - 1);
+      });
+
+      thisWidget.linkIncrease.addEventListener('click', function(){
+        event.preventDefault();
+        thisWidget.setValue(thisWidget.value + 1);
+      });
+    }
+
+    announce(){
+      const thisWidget = this;
+
+      const event = new Event('updated');
+      thisWidget.element.dispatchEvent(event);
+    }
+
+
+  }
+
+
+
   const app = {
     initMenu: function(){
       const thisApp = this;
@@ -213,11 +296,11 @@
 
     init: function(){
       const thisApp = this;
-      console.log('*** App starting ***');
-      console.log('thisApp:', thisApp);
-      console.log('classNames:', classNames);
-      console.log('settings:', settings);
-      console.log('templates:', templates);
+      // console.log('*** App starting ***');
+      // console.log('thisApp:', thisApp);
+      // console.log('classNames:', classNames);
+      // console.log('settings:', settings);
+      // console.log('templates:', templates);
 
       thisApp.initData();
       thisApp.initMenu();
