@@ -138,7 +138,7 @@
         /* prevent default action for event */
         event.preventDefault();
         /* toggle active class on element of thisProduct */
-        thisProduct.element.classList.add('active');
+        thisProduct.element.classList.toggle(classNames.menuProduct.wrapperActive);
         // // console.log('klasa acive dodana:', thisProduct.element);
         /* find all active products */
         const products = document.querySelectorAll('article.active');
@@ -147,7 +147,7 @@
           /* START: if the active product isn't the element of thisProduct */
           if(product != thisProduct.element){
           /*remove class active for the active product */
-            product.classList.remove('active');
+            product.classList.remove(classNames.menuProduct.wrapperActive);
             // // console.log('klasa active usunięta', product);
           }
           /* END: if the active product isn't the element od thisProduct */
@@ -314,6 +314,7 @@
 
       thisCart.products = [];
       thisCart.getElements(element);
+      thisCart.initActions();
 
       console.log('new Cart: ', thisCart);
     }
@@ -324,6 +325,22 @@
       thisCart.dom = {};
 
       thisCart.dom.wrapper = element;
+
+      thisCart.dom.toggleTrigger = thisCart.dom.wrapper.querySelector(select.cart.toggleTrigger);
+    }
+
+    initActions(){
+      const thisCart = this;
+
+      const triggerCart = thisCart.dom.toggleTrigger;
+      console.log('triggerCart: ', triggerCart);
+
+      triggerCart.addEventListener('click', function(){
+        event.preventDefault();
+        thisCart.dom.wrapper.classList.toggle(classNames.cart.wrapperActive);
+
+      });
+
     }
   }
 
@@ -359,13 +376,14 @@
     initCart: function(){
       const thisApp = this;
 
-      const cartElement = document.querySelector(select.containerOf.cart);
+      const cartElem = document.querySelector(select.containerOf.cart);
       thisApp.cart = new Cart(cartElem);
-    }
+    },
   };
 
 
   app.init();
+  app.initCart();
 }
 
 
