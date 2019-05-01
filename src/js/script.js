@@ -33,23 +33,23 @@
       },
     },
     cart: {
-    productList: '.cart__order-summary',
-    toggleTrigger: '.cart__summary',
-    totalNumber: `.cart__total-number`,
-    totalPrice: '.cart__total-price strong, .cart__order-total .cart__order-price-sum strong',
-    subtotalPrice: '.cart__order-subtotal .cart__order-price-sum strong',
-    deliveryFee: '.cart__order-delivery .cart__order-price-sum strong',
-    form: '.cart__order',
-    formSubmit: '.cart__order [type="submit"]',
-    phone: '[name="phone"]',
-    address: '[name="address"]',
-  },
-  cartProduct: {
-    amountWidget: '.widget-amount',
-    price: '.cart__product-price',
-    edit: '[href="#edit"]',
-    remove: '[href="#remove"]',
-  },
+      productList: '.cart__order-summary',
+      toggleTrigger: '.cart__summary',
+      totalNumber: `.cart__total-number`,
+      totalPrice: '.cart__total-price strong, .cart__order-total .cart__order-price-sum strong',
+      subtotalPrice: '.cart__order-subtotal .cart__order-price-sum strong',
+      deliveryFee: '.cart__order-delivery .cart__order-price-sum strong',
+      form: '.cart__order',
+      formSubmit: '.cart__order [type="submit"]',
+      phone: '[name="phone"]',
+      address: '[name="address"]',
+    },
+    cartProduct: {
+      amountWidget: '.widget-amount',
+      price: '.cart__product-price',
+      edit: '[href="#edit"]',
+      remove: '[href="#remove"]',
+    },
   };
 
   const classNames = {
@@ -58,9 +58,9 @@
       imageVisible: 'active',
     },
 
-     cart: {
-    wrapperActive: 'active',
-  },
+    cart: {
+      wrapperActive: 'active',
+    },
   };
 
   const settings = {
@@ -69,9 +69,9 @@
       defaultMin: 1,
       defaultMax: 9,
     },
-     cart: {
-    defaultDeliveryFee: 20,
-  },
+    cart: {
+      defaultDeliveryFee: 20,
+    },
   };
 
   const templates = {
@@ -308,24 +308,24 @@
 
   }
 
-class Cart{
-  constructor(element){
-    const thisCart = this;
+  class Cart{
+    constructor(element){
+      const thisCart = this;
 
-    thisCart.products = [];
-    thisCart.getElements(element);
+      thisCart.products = [];
+      thisCart.getElements(element);
 
-    console.log('new Cart: ', thisCart);
+      console.log('new Cart: ', thisCart);
+    }
+
+    getElements(element){
+      const thisCart = this;
+
+      thisCart.dom = {};
+
+      thisCart.dom.wrapper = element;
+    }
   }
-
-  getElements(element){
-  const thisCart = this;
-
-  thisCart.dom = {};
-
-  thisCart.dom.wrapper = element;
-  }
-}
 
   const app = {
     initMenu: function(){
@@ -355,6 +355,13 @@ class Cart{
 
       thisApp.data = dataSource;
     },
+
+    initCart: function(){
+      const thisApp = this;
+
+      const cartElement = document.querySelector(select.containerOf.cart);
+      thisApp.cart = new Cart(cartElem);
+    }
   };
 
 
