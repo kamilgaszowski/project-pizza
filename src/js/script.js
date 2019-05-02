@@ -129,38 +129,27 @@
     initAccordion(){
       const thisProduct = this;
 
-      /* find the clickable trigger */
       const trigger = thisProduct.accordionTrigger;
-      // // console.log('triggers: ', trigger);
-      /* START: click event listener to trigger */
+      // console.log('triggers: ', trigger);
       trigger.addEventListener('click', function(){
-        // // console.log('clicked');
-        /* prevent default action for event */
+      // console.log('clicked');
         event.preventDefault();
-        /* toggle active class on element of thisProduct */
         thisProduct.element.classList.toggle(classNames.menuProduct.wrapperActive);
-        // // console.log('klasa acive dodana:', thisProduct.element);
-        /* find all active products */
+        // console.log('klasa acive dodana:', thisProduct.element);
         const products = document.querySelectorAll('article.active');
-        /* START LOOP: for each active product */
         for(let product of products){
-          /* START: if the active product isn't the element of thisProduct */
           if(product != thisProduct.element){
-          /*remove class active for the active product */
             product.classList.remove(classNames.menuProduct.wrapperActive);
-            // // console.log('klasa active usunięta', product);
+            // console.log('klasa active usunięta', product);
           }
-          /* END: if the active product isn't the element od thisProduct */
         }
-        /* End LOOP: for each active product */
       });
-      /* END: click event listener to trigger */
     }
 
     initOrderForm(){
       const thisProduct = this;
 
-      // // console.log('initOrderForm', thisProduct);
+      // console.log('initOrderForm', thisProduct);
 
       thisProduct.form.addEventListener('submit', function(event){
         event.preventDefault();
@@ -176,18 +165,20 @@
       thisProduct.cartButton.addEventListener('click', function(event){
         event.preventDefault();
         thisProduct.processOrder();
+        thisProduct.addToCart();
       });
     }
 
     processOrder(){
       const thisProduct = this;
-      // // console.log('processOrder: ', thisProduct);
+      // console.log('processOrder: ', thisProduct);
 
       const formData = utils.serializeFormToObject(thisProduct.form);
-      // // console.log('formData: ', formData);
+      // console.log('formData: ', formData);
 
+      thisProduct.params = {};
       let price = thisProduct.data.price;
-      // // console.log('price: ', price);
+      // console.log('price: ', price);
 
       for(let paramId in thisProduct.data.params){
 
@@ -198,23 +189,30 @@
         for(let optionId in selected.options){
 
           const option = selected.options[optionId];
-          // // console.log('option: ', option);
+          // console.log('option: ', option);
           const optionSelected = formData.hasOwnProperty(paramId) && formData[paramId].indexOf(optionId) > -1;
 
           if(optionSelected && !option.default){
-            // // console.log('!option default:', !option.default);
+            // console.log('!option default:', !option.default);
             price += option.price;
-            // // console.log('price +:', option.price);
+            // console.log('price +:', option.price);
 
           } else if(!optionSelected && option.default){
             price -= option.price;
 
-            // // console.log('price -:', option.price);
+            // console.log('price -:', option.price);
           }
           const imagesClass = thisProduct.imageWrapper.querySelectorAll('.' + paramId + '-' + optionId);
-          // // console.log('imagesClass: ', imagesClass);
+          // console.log('imagesClass: ', imagesClass);
 
           if(optionSelected){
+            if(!thisProduct.params[paramId]){
+              thisProduct.params[paramId] = {
+                label: option.label,
+                options: {},
+              };
+            }
+            thisProduct.params[paramId].options[optionId] = option.label;
             for(let imageClass of imagesClass){
               imageClass.classList.add(classNames.menuProduct.imageVisible);
             }
@@ -225,10 +223,12 @@
           }
         }
       }
-      price *= thisProduct.amountWidget.value;
-      thisProduct.priceElem.innerHTML = price;
+      thisProduct.priceSingle = price;
+      thisProduct.price = thisProduct.priceSingle * thisProduct.amountWidget.value;
 
+      thisProduct.priceElem.innerHTML = thisProduct.price;
 
+      console.log('thisProduct.params:', thisProduct.params);
     }
 
     initAmountWidget(){
@@ -239,6 +239,14 @@
       thisProduct.amountWidgetElem.addEventListener('updated', function(){
         thisProduct.processOrder();
       });
+    }
+
+    addToCart(){
+      const thisProduct = this;
+
+      thisProduct.name = thisProduct.data.name;
+      thisProduct.amount = thisProduct.amountWidget.value;
+      app.cart.add(thisProduct);
     }
   }
 
@@ -327,6 +335,8 @@
       thisCart.dom.wrapper = element;
 
       thisCart.dom.toggleTrigger = thisCart.dom.wrapper.querySelector(select.cart.toggleTrigger);
+
+      thisCart.dom.productList = thisCart.dom.wrapper.querySelector(select.cart.productList);
     }
 
     initActions(){
@@ -340,7 +350,19 @@
         thisCart.dom.wrapper.classList.toggle(classNames.cart.wrapperActive);
 
       });
+    }
 
+    add(menuProduct){
+      const thisCart = this;
+
+      const generatedHTML = templates.cartProduct(menuProduct);
+
+      const generatedDOM = utils.createDOMFromHTML(generatedHTML);
+
+      thisCart.dom.productList.appendChild(generatedDOM);
+
+
+      console.log('adding product: ', menuProduct);
     }
   }
 
@@ -357,11 +379,11 @@
 
     init: function(){
       const thisApp = this;
-      // // console.log('*** App starting ***');
-      // // console.log('thisApp:', thisApp);
-      // // console.log('classNames:', classNames);
-      // // console.log('settings:', settings);
-      // // console.log('templates:', templates);
+      // console.log('*** App starting ***');
+      // console.log('thisApp:', thisApp);
+      // console.log('classNames:', classNames);
+      // console.log('settings:', settings);
+      // console.log('templates:', templates);
 
       thisApp.initData();
       thisApp.initMenu();
