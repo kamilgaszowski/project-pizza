@@ -325,7 +325,7 @@
       thisCart.products = [];
       thisCart.getElements(element);
       thisCart.initActions();
-      thisCart.deliveryFee = 20;
+      thisCart.deliveryFee = settings.cart.defaultDeliveryFee;
 
       console.log('new Cart: ', thisCart.products);
     }
