@@ -53,7 +53,17 @@ const app = {
     console.log('thisApp.pages:', thisApp.pages);
     thisApp.navLinks = Array.from(document.querySelectorAll(select.nav.links));
 
-    thisApp.activatePage(thisApp.pages[0].id);
+    let pagesMatchingHash = [];
+
+    if(window.location.hash.length > 2){
+      const idFromHash = window.location.hash.replace('#/', '');
+
+      pagesMatchingHash = thisApp.pages.filter(function(page){
+        return page.id == idFromHash;
+      });
+    }
+
+    thisApp.activatePage(pagesMatchingHash.length ? pagesMatchingHash[0].id : thisApp.pages[0].id);
 
     for(let link of thisApp.navLinks){
       link.addEventListener('click', function(event){
@@ -68,21 +78,22 @@ const app = {
 
 
       });
-    };
+    }
+
   },
 
   activatePage(pageId){
     const thisApp = this;
 
     for(let link of thisApp.navLinks){
-      console.log('link:', link);
       link.classList.toggle(classNames.nav.active, link.getAttribute('href') == '#' + pageId);
-    };
+    }
 
     for(let page of thisApp.pages){
-      console.log('page:', page);
       page.classList.toggle(classNames.nav.active, page.getAttribute('id') == pageId);
-    };
+    }
+
+    window.location.hash = '#/' + pageId;
   },
 
   init: function(){
