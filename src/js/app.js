@@ -1,6 +1,6 @@
 import {Product} from './components/Product.js';
 import {Cart} from './components/Cart.js';
-import {select, settings} from './settings.js';
+import {select, settings, classNames} from './settings.js';
 
 const app = {
   initMenu: function(){
@@ -45,6 +45,46 @@ const app = {
       });
     console.log('thisApp.data', JSON.stringify(thisApp.data));
   },
+
+  initPages: function(){
+    const thisApp = this;
+
+    thisApp.pages = Array.from(document.querySelector(select.containerOf.pages).children);
+    console.log('thisApp.pages:', thisApp.pages);
+    thisApp.navLinks = Array.from(document.querySelectorAll(select.nav.links));
+
+    thisApp.activatePage(thisApp.pages[0].id);
+
+    for(let link of thisApp.navLinks){
+      link.addEventListener('click', function(event){
+        const clickedElement = this;
+        event.preventDefault();
+
+        let href = clickedElement.getAttribute('href');
+        let idPage = href.replace('#', '');
+        console.log('idPage:', idPage);
+
+        thisApp.activatePage(idPage);
+
+
+      });
+    };
+  },
+
+  activatePage(pageId){
+    const thisApp = this;
+
+    for(let link of thisApp.navLinks){
+      console.log('link:', link);
+      link.classList.toggle(classNames.nav.active, link.getAttribute('href') == '#' + pageId);
+    };
+
+    for(let page of thisApp.pages){
+      console.log('page:', page);
+      page.classList.toggle(classNames.nav.active, page.getAttribute('id') == pageId);
+    };
+  },
+
   init: function(){
     const thisApp = this;
     // console.log('*** App starting ***');
@@ -54,6 +94,7 @@ const app = {
     // console.log('templates:', templates);
 
     thisApp.initData();
+    thisApp.initPages();
   },
 };
 app.init();
