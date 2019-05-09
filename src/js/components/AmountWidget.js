@@ -20,7 +20,7 @@ export class AmountWidget extends BaseWidget{
     thisWidget.dom.linkIncrease = thisWidget.dom.wrapper.querySelector(select.widgets.amount.linkIncrease);
   }
 
-   isValid(newValue){
+  isValid(newValue){
     return !isNaN(newValue) && newValue >=settings.amountWidget.defaultMin && newValue <= settings.amountWidget.defaultMax;
   }
 
