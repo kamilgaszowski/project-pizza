@@ -1,4 +1,4 @@
-import {select} from '../settings.js';
+import {select, settings} from '../settings.js';
 import {utils} from '../utils.js';
 import {BaseWidget} from './BaseWidget.js';
 
@@ -22,7 +22,10 @@ export class DatePicker extends BaseWidget {
     const thisWidget = this;
 
     thisWidget.minDate = new Date(thisWidget.value);
-    thisWidget.maxDate = utils.addDays(thisWidget.minDate, 14);
+
+
+    thisWidget.maxDate = utils.addDays(thisWidget.minDate, settings.datePicker.maxDaysInFuture);
+    console.log('maxDate', thisWidget.maxDate);
     const maxDate = utils.dateToStr(thisWidget.maxDate);
 
 
