@@ -1,4 +1,4 @@
-import {select, templates} from '../settings.js';
+import {select, settings, templates} from '../settings.js';
 import {utils} from '../utils.js';
 import {AmountWidget} from './AmountWidget.js';
 import {DatePicker} from './DatePicker.js';
@@ -11,6 +11,9 @@ export class Booking {
 
     thisBooking.render(element);
     thisBooking.initWidgets();
+    thisBooking.getData();
+    thisBooking.parseData();
+
   }
 
   render(element){
@@ -20,14 +23,14 @@ export class Booking {
 
     thisBooking.dom = {};
     thisBooking.dom.wrapper = element;
-    console.log('thisBooking.dom.wrapper:', thisBooking.dom.wrapper);
+    // console.log('thisBooking.dom.wrapper:', thisBooking.dom.wrapper);
     thisBooking.dom.wrapper.appendChild(generatedDOM);
-    console.log('thisBooking.dom.wrapper:', thisBooking.dom.wrapper);
+    // console.log('thisBooking.dom.wrapper:', thisBooking.dom.wrapper);
 
     thisBooking.dom.peopleAmount = thisBooking.dom.wrapper.querySelector(select.booking.peopleAmount);
     thisBooking.dom.hoursAmount = thisBooking.dom.wrapper.querySelector(select.booking.hoursAmount);
 
-    console.log('thisBooking.dom', thisBooking.dom);
+    // console.log('thisBooking.dom', thisBooking.dom);
 
     thisBooking.dom.datePicker = thisBooking.dom.wrapper.querySelector(select.widgets.datePicker.wrapper);
     thisBooking.dom.hourPicker = thisBooking.dom.wrapper.querySelector(select.widgets.hourPicker.wrapper);
@@ -44,4 +47,134 @@ export class Booking {
 
   }
 
+  getData(){
+    const thisBooking = this;
+
+    const startEndDates = {};
+    startEndDates[settings.db.dateStartParamKey] = utils.dateToStr(thisBooking.datePicker.minDate);
+    startEndDates[settings.db.dateEndParamKey] = utils.dateToStr(thisBooking.datePicker.maxDate);
+
+    const endDate = {};
+    endDate[settings.db.dateEndParamKey] = startEndDates[settings.db.dateEndParamKey];
+
+    const params = {
+      booking: utils.queryParams(startEndDates),
+      eventsCurrent: settings.db.notRepeatParam + '&' + utils.queryParams(startEndDates),
+      eventsRepeat: settings.db.repeatParam + '&' + utils.queryParams(endDate),
+    };
+
+    console.log('getData params', endDate);
+
+
+    const urls = {
+      booking: settings.db.url + '/' + settings.db.booking + '?' + params.booking,
+      eventsCurrent: settings.db.url + '/' + settings.db.event + '?' + params.eventsCurrent,
+      eventsRepeat: settings.db.url + '/' + settings.db.event + '?' + params.eventsRepeat,
+    };
+
+    // console.log('getData urls', urls);
+
+    Promise.all([
+      fetch(urls.booking),
+      fetch(urls.eventsCurrent),
+      fetch(urls.eventsRepeat),
+    ])
+      .then(function([bookingsResponse, eventsCurrentResponse, eventsRepeatResponse]){
+        return Promise.all([
+          bookingsResponse.json(),
+          eventsCurrentResponse.json(),
+          eventsRepeatResponse.json(),
+        ]);
+      })
+      .then(function([bookings, eventsCurrent, eventsRepeat]){
+        thisBooking.parseData(bookings, eventsCurrent, eventsRepeat);
+
+
+      });
+
+
+  }
+
+  parseData(bookings, eventsCurrent, eventsRepeat){
+    const thisBooking = this;
+
+    thisBooking.booked = {};
+
+
+
+
+
+
+    for(let item of eventsRepeat){
+      console.log('item', item);
+
+
+      const minDate = utils.dateToStr(thisBooking.datePicker.minDate);
+      const maxDate = utils.dateToStr(thisBooking.datePicker.maxDate);
+      console.log('maxDate', maxDate);
+      const days = [];
+
+      for(let number = 0; number < settings.datePicker.maxDaysInFuture; number+1){
+        console.log('number', number++);
+        let nextDay = utils.addDays(minDate, number);
+        let nextDate = utils.dateToStr(nextDay);
+
+        days.push(nextDate);
+
+        // console.log('days', days);
+
+        for(let day of days){
+          console.log('day', day);
+          item.date = day;
+        }
+
+        thisBooking.makeBooked(item.date, item.hour, item.duration, item.table);
+      }
+    }
+
+
+
+
+
+    for(let item of bookings){
+      thisBooking.makeBooked(item.date, item.hour, item.duration, item.table);
+    }
+
+    for(let item of eventsCurrent){
+      thisBooking.makeBooked(item.date, item.hour, item.duration, item.table);
+    }
+
+    console.log('thisBooking.booked ', thisBooking.booked);
+  }
+
+  makeBooked(date, hour, duration, table){
+    const thisBooking = this;
+
+    if(!thisBooking.booked[date]){
+      thisBooking.booked[date] = {};
+    }
+
+    const startHour = utils.hourToNumber(hour);
+
+    for(let hour = startHour; hour < startHour + duration; hour += 0.5){
+      if(!thisBooking.booked[date][hour]){
+        thisBooking.booked[date][hour] = [];
+      }
+
+      thisBooking.booked[date][hour].push(table);
+    }
+
+
+  }
+
+
 }
+
+
+
+
+
+
+
+
+

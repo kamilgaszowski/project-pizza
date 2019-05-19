@@ -38,20 +38,20 @@ const app = {
         return rawResponse.json();
       })
       .then(function(parsedResponse){
-        console.log('parsedResponse', parsedResponse);
+      //  console.log('parsedResponse', parsedResponse);
 
         thisApp.data.products = parsedResponse;
 
         thisApp.initMenu();
       });
-    console.log('thisApp.data', JSON.stringify(thisApp.data));
+  //  console.log('thisApp.data', JSON.stringify(thisApp.data));
   },
 
   initPages: function(){
     const thisApp = this;
 
     thisApp.pages = Array.from(document.querySelector(select.containerOf.pages).children);
-    console.log('thisApp.pages:', thisApp.pages);
+    //  console.log('thisApp.pages:', thisApp.pages);
     thisApp.navLinks = Array.from(document.querySelectorAll(select.nav.links));
 
     let pagesMatchingHash = [];
@@ -73,7 +73,7 @@ const app = {
 
         let href = clickedElement.getAttribute('href');
         let idPage = href.replace('#', '');
-        console.log('idPage:', idPage);
+        //  console.log('idPage:', idPage);
 
         thisApp.activatePage(idPage);
 
