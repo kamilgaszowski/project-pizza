@@ -34,7 +34,7 @@ export class Booking {
 
     thisBooking.dom.datePicker = thisBooking.dom.wrapper.querySelector(select.widgets.datePicker.wrapper);
     thisBooking.dom.hourPicker = thisBooking.dom.wrapper.querySelector(select.widgets.hourPicker.wrapper);
-
+    thisBooking.dom.tables = thisBooking.dom.wrapper.querySelectorAll(select.booking.tables);
   }
 
   initWidgets(){
@@ -44,6 +44,10 @@ export class Booking {
     thisBooking.hoursAmount = new AmountWidget(thisBooking.dom.hoursAmount);
     thisBooking.datePicker = new DatePicker(thisBooking.dom.datePicker);
     thisBooking.hourPicker = new HourPicker(thisBooking.dom.hourPicker);
+
+    thisBooking.dom.wrapper.addEventListener('updated', function(){
+      thisBooking.updateDOM();
+    });
 
   }
 
@@ -137,6 +141,8 @@ export class Booking {
     }
 
     console.log('thisBooking.booked ', thisBooking.booked);
+
+    thisBooking.updateDOM();
   }
 
   makeBooked(date, hour, duration, table){
@@ -159,11 +165,30 @@ export class Booking {
 
   }
 
+  updateDOM(){
+
+    const thisBooking = this;
+    console.log('metoda updateDOM');
+
+    thisBooking.date = thisBooking.datePicker.value;
+    thisBooking.hour = utils.hourToNumber(thisBooking.hourPicker.value);
+
+
+
+    for(let table of thisBooking.dom.tables){
+      let numberTable = table.getAttribute(settings.booking.tableIdAttribute);
+      console.log('number table:', numberTable);
+
+
+
+    }
+  }
+
 
 }
 
 
-
+//thisBooking.booked[thisBooking.date] == 'undefined' && typeof thisBooking.booked[thisBooking.date][thisBooking.hour] == 'undefined' &&
 
 
 
