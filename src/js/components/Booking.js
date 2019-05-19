@@ -102,20 +102,24 @@ export class Booking {
 
 
 
+    for(let item of bookings){
+      thisBooking.makeBooked(item.date, item.hour, item.duration, item.table);
+    }
 
-
+    for(let item of eventsCurrent){
+      thisBooking.makeBooked(item.date, item.hour, item.duration, item.table);
+    }
 
     for(let item of eventsRepeat){
-      console.log('item', item);
-
-
+      //console.log('item', item);
       const minDate = utils.dateToStr(thisBooking.datePicker.minDate);
-      const maxDate = utils.dateToStr(thisBooking.datePicker.maxDate);
-      console.log('maxDate', maxDate);
+      //const maxDate = utils.dateToStr(thisBooking.datePicker.maxDate);
+      //console.log('maxDate', maxDate);
       const days = [];
 
       for(let number = 0; number < settings.datePicker.maxDaysInFuture; number+1){
-        console.log('number', number++);
+        number++;
+        //console.log('number', number++);
         let nextDay = utils.addDays(minDate, number);
         let nextDate = utils.dateToStr(nextDay);
 
@@ -124,24 +128,12 @@ export class Booking {
         // console.log('days', days);
 
         for(let day of days){
-          console.log('day', day);
+          //console.log('day', day);
           item.date = day;
         }
 
         thisBooking.makeBooked(item.date, item.hour, item.duration, item.table);
       }
-    }
-
-
-
-
-
-    for(let item of bookings){
-      thisBooking.makeBooked(item.date, item.hour, item.duration, item.table);
-    }
-
-    for(let item of eventsCurrent){
-      thisBooking.makeBooked(item.date, item.hour, item.duration, item.table);
     }
 
     console.log('thisBooking.booked ', thisBooking.booked);
