@@ -1,4 +1,4 @@
-import {select, settings, templates} from '../settings.js';
+import {select, settings, classNames, templates} from '../settings.js';
 import {utils} from '../utils.js';
 import {AmountWidget} from './AmountWidget.js';
 import {DatePicker} from './DatePicker.js';
@@ -168,19 +168,26 @@ export class Booking {
   updateDOM(){
 
     const thisBooking = this;
-    console.log('metoda updateDOM');
+    //console.log('metoda updateDOM', thisBooking.booked[thisBooking.date][thisBooking.hour] );
 
     thisBooking.date = thisBooking.datePicker.value;
     thisBooking.hour = utils.hourToNumber(thisBooking.hourPicker.value);
+    console.log('thisBooking.hour', thisBooking.hour);
+
+
+
 
 
 
     for(let table of thisBooking.dom.tables){
       let numberTable = table.getAttribute(settings.booking.tableIdAttribute);
-      console.log('number table:', numberTable);
+      console.log('table:', numberTable);
 
-
-
+      if((typeof thisBooking.booked[thisBooking.date] != 'undefined') && (typeof thisBooking.booked[thisBooking.date][thisBooking.hour] != 'undefined') && (numberTable = thisBooking.booked[thisBooking.date][thisBooking.hour])){
+        table.classList.add(classNames.booking.tableBooked);
+      } else {
+        table.classList.remove(classNames.booking.tableBooked);
+      }
     }
   }
 
