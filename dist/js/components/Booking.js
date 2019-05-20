@@ -172,7 +172,7 @@ export class Booking {
 
     thisBooking.date = thisBooking.datePicker.value;
     thisBooking.hour = utils.hourToNumber(thisBooking.hourPicker.value);
-    console.log('thisBooking.hour', thisBooking.date);
+    console.log('thisBooking.date', thisBooking.date);
 
 
     for(let table of thisBooking.dom.tables){
