@@ -172,18 +172,17 @@ export class Booking {
 
     thisBooking.date = thisBooking.datePicker.value;
     thisBooking.hour = utils.hourToNumber(thisBooking.hourPicker.value);
-    console.log('thisBooking.hour', thisBooking.hour);
-
-
-
-
+    console.log('thisBooking.hour', thisBooking.date);
 
 
     for(let table of thisBooking.dom.tables){
       let numberTable = table.getAttribute(settings.booking.tableIdAttribute);
       console.log('table:', numberTable);
+      if(!isNaN(numberTable)){
+        numberTable = parseInt(numberTable);
+      }
 
-      if((typeof thisBooking.booked[thisBooking.date] != 'undefined') && (typeof thisBooking.booked[thisBooking.date][thisBooking.hour] != 'undefined') && (numberTable = thisBooking.booked[thisBooking.date][thisBooking.hour])){
+      if((typeof thisBooking.booked[thisBooking.date] !== 'undefined') && (typeof thisBooking.booked[thisBooking.date][thisBooking.hour] !== 'undefined') && (thisBooking.booked[thisBooking.date][thisBooking.hour].indexOf(numberTable) > -1)){
         table.classList.add(classNames.booking.tableBooked);
       } else {
         table.classList.remove(classNames.booking.tableBooked);
