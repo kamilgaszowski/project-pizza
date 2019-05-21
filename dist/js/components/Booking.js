@@ -12,7 +12,7 @@ export class Booking {
     thisBooking.render(element);
     thisBooking.initWidgets();
     thisBooking.getData();
-    thisBooking.parseData();
+
 
   }
 
@@ -93,17 +93,13 @@ export class Booking {
       .then(function([bookings, eventsCurrent, eventsRepeat]){
         thisBooking.parseData(bookings, eventsCurrent, eventsRepeat);
 
-
       });
-
-
   }
 
   parseData(bookings, eventsCurrent, eventsRepeat){
     const thisBooking = this;
 
     thisBooking.booked = {};
-
 
 
     for(let item of bookings){
