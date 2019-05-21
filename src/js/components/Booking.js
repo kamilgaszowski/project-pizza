@@ -144,14 +144,14 @@ export class Booking {
   makeBooked(date, hour, duration, table){
     const thisBooking = this;
 
-    if(!thisBooking.booked[date]){
+    if(typeof thisBooking.booked[date] == 'undefined'){
       thisBooking.booked[date] = {};
     }
 
     const startHour = utils.hourToNumber(hour);
 
     for(let hour = startHour; hour < startHour + duration; hour += 0.5){
-      if(!thisBooking.booked[date][hour]){
+      if(typeof thisBooking.booked[date][hour] == 'undefined'){
         thisBooking.booked[date][hour] = [];
       }
 
@@ -167,8 +167,10 @@ export class Booking {
     //console.log('metoda updateDOM', thisBooking.booked[thisBooking.date][thisBooking.hour] );
 
     thisBooking.date = thisBooking.datePicker.value;
+
+
     thisBooking.hour = utils.hourToNumber(thisBooking.hourPicker.value);
-    console.log('thisBooking.date', thisBooking.date);
+
 
 
     for(let table of thisBooking.dom.tables){
@@ -178,12 +180,13 @@ export class Booking {
         numberTable = parseInt(numberTable);
       }
 
-      if((typeof thisBooking.booked[thisBooking.date] !== 'undefined') && (typeof thisBooking.booked[thisBooking.date][thisBooking.hour] !== 'undefined') && (thisBooking.booked[thisBooking.date][thisBooking.hour].indexOf(numberTable) > -1)){
+      if((typeof thisBooking.booked[thisBooking.date] != 'undefined') && (typeof thisBooking.booked[thisBooking.date][thisBooking.hour] != 'undefined') && (thisBooking.booked[thisBooking.date][thisBooking.hour].indexOf(numberTable) > -1)){
         table.classList.add(classNames.booking.tableBooked);
       } else {
         table.classList.remove(classNames.booking.tableBooked);
       }
     }
+    console.log('thisBooking.date', thisBooking.datePicker.value);
   }
 
 

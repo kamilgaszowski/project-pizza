@@ -219,7 +219,7 @@
       "date": "2019-05-21",
       "hour": "16:00",
       "table": 3,
-      "repeat": "daily",
+      "repeat": "false",
       "duration": 2,
       "ppl": 3,
       "starters": ["bread", "lemonWater"]
@@ -240,7 +240,7 @@
       "hour": "13:00",
       "table": 2,
       "repeat": "daily",
-      "duration": 4,
+      "duration": 1,
       "ppl": 3,
       "starters": []
     },
@@ -249,52 +249,11 @@
       "date": "2019-05-21",
       "hour": "18:00",
       "table": 2,
-      "repeat": "daily",
+      "repeat": "false",
       "duration": 2,
       "ppl": 3,
       "starters": ["lemonWater"]
     }
   ],
-  "booking": [
-    {
-      "id": 1,
-      "date": "2019-05-21",
-      "hour": "18:00",
-      "table": 3,
-      "repeat": "false",
-      "duration": 2,
-      "ppl": 3,
-      "starters": ["bread", "lemonWater"]
-    },
-    {
-      "id": 2,
-      "date": "2019-05-21",
-      "hour": "19:00",
-      "table": 3,
-      "repeat": "false",
-      "duration": 2,
-      "ppl": 3,
-      "starters": ["bread", "lemonWater"]
-    },
-     {
-      "id": 1,
-      "date": "2019-05-21",
-      "hour": "21:00",
-      "table": 3,
-      "repeat": "daily",
-      "duration": 1,
-      "ppl": 3,
-      "starters": ["bread", "lemonWater"]
-    },
-    {
-      "id": 2,
-      "date": "2019-05-21",
-      "hour": "12:00",
-      "table": 3,
-      "repeat": "false",
-      "duration": 2,
-      "ppl": 3,
-      "starters": ["bread", "lemonWater"]
-    }
-  ]
+  "booking": []
 }
